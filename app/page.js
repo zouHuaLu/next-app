@@ -1,5 +1,4 @@
-export default () => {
-    return (
-        <div>这是主页</div>
-    )
+// app/page.js
+export default function Page() {
+    return <h1>/app/page.js</h1>
 }

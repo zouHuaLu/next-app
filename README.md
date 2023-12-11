@@ -67,3 +67,81 @@ DOM 元素，不保留状态**.
 
 1. 使用`<Link>`组件
 2. 使用 `useRouter` Hook
+
+# 动态路由、路由组、平行路由和拦截路由
+
+## 动态路由
+
+### [folderName]
+
+使用动态路由，你需要将文件夹的名字用方括号括住，比如 `[id]`、`[slug]`。这个路由的名字会作为 `param` prop
+传给`布局（layout）`、 `页面（page）`、 `路由处理程序（route）`以及 `generateMetadata（用于生成页面元数据）` 函数。
+
+### [...folderName]
+
+在命名文件夹的时候，如果你在方括号内添加省略号，比如 [...folderName]，这表示捕获所有后面所有的路由片段。
+
+也就是说，`app/shop/[...slug]/page.js`会匹配 `/shop/clothes`，也会匹配 `/shop/clothes/tops`、`/shop/clothes/tops/t-shirts`
+等等。
+
+### [[...folderName]]
+
+在命名文件夹的时候，如果你在双方括号内添加省略号，比如 [[...folderName]]，这表示可选的捕获所有后面所有的路由片段。
+
+## 路由组（Route groups）
+
+在`app`目录下，文件夹名称通常会被映射到 `URL` 中，但你可以将文件夹标记为路由组，阻止文件夹名称被映射到 `URL` 中。
+
+使用路由组，你可以将路由和项目文件按照逻辑进行分组，但不会影响 URL 路径结构。路由组可用于比如：
+
+- 按站点、意图、团队等将路由分组
+- 在同一层级中创建多个布局，甚至是创建多个根布局
+
+那么该如何标记呢？把文件夹用括号括住就可以了
+
+### 按逻辑分组
+
+将路由按逻辑分组，但不影响 URL 路径：
+
+![img.png](images/img.png)
+
+### 创建不同布局
+
+借助路由组，即便在同一层级，也可以创建不同的布局：
+
+![img.png](images/img2.png)
+
+在这个例子中，`/account` 、`/cart`、`/checkout` 都在同一层级。但是 `/account`和 `/cart`使用的是 `/app/(shop)/layout.js`
+布局和`app/layout.js`布局，`/checkout`使用的是 `app/layout.js`
+
+### 创建多个根布局
+
+创建多个根布局，你需要删除掉 app/layout.js 文件，然后在每组都创建一个
+layout.js文件。创建的时候要注意，因为是根布局，所以要有 <html> 和 <body> 标签。
+
+![img.png](images/img3.png)
+
+## 平行路由
+
+平行路由可以使你在同一个布局中同时或者有条件的渲染一个或者多个页面（类似于 Vue 的插槽功能）。
+
+### 条件渲染
+
+平行路由的使用方式是将文件夹以`@`作为开头进行命名，这个文件夹下面的`page.js`将会自动注入文件夹同级`layout`的props中
+![img.png](images/img4.png)
+
+### 独立错误处理和加载
+
+平行路由可以让你为每个路由定义独立的错误处理和加载界面：
+![img.png](images/img5.png)
+
+### 新约定文件default.js
+
+访问`/about`，会报404，这是因为匹配不到`app/layout.js`里面的`team`和`analytics`，所以我们可以在`@team`和`@analytics`
+下都添加一个`default.js`
+
+### 用途：实现modal
+
+在实际开发中，平行路由可以用于渲染弹窗（Modal）
+
+![img.png](images/img6.png)
